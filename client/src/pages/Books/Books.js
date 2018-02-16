@@ -12,8 +12,14 @@ class Books extends Component {
     books: [],
     title: "",
     author: "",
-    synopsis: ""
+    synopsis: "",
+
+    topic: "",
+    begin: "",
+    end: ""
   };
+
+
 
   componentDidMount() {
     this.loadBooks();
@@ -33,6 +39,13 @@ class Books extends Component {
       .catch(err => console.log(err));
   };
 
+  // handleInputChange = event => {
+  //   const { name, value } = event.target;
+  //   this.setState({
+  //     [name]: value
+  //   });
+  // };
+
   handleInputChange = event => {
     const { name, value } = event.target;
     this.setState({
@@ -40,17 +53,34 @@ class Books extends Component {
     });
   };
 
+  // Its grabbing the topic, begin and end and throwing them all into topic paramater of the API call as an object.  Leaving begin and end undefined.  
+
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
+    API.getArticles({
+      topic: this.state.topic,
+      begin: this.state.begin,
+      end: this.state.end
+    })
+      .then(res => {
+        if (res.data.status === "error") {
+          throw new Error(res.data.message);
+        } else {
+          console.log(res);
+        }
+        // this.setState({ results: res.data.message, error: "" });
       })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
-    }
+      .catch(err => this.setState({ error: err.message }));
+
+    // if (this.state.title && this.state.author) {
+    //   API.saveBook({
+    //     title: this.state.title,
+    //     author: this.state.author,
+    //     synopsis: this.state.synopsis
+    //   })
+    //     .then(res => this.loadBooks())
+    //     .catch(err => console.log(err));
+    // }
   };
 
   render() {
@@ -63,25 +93,25 @@ class Books extends Component {
             </Jumbotron>
             <form>
               <Input
-                value={this.state.title}
+                value={this.state.topic}
                 onChange={this.handleInputChange}
-                name="title"
-                placeholder="Topic (required)"
+                name="topic"
+                placeholder="Topic"
               />
               <Input
-                value={this.state.author}
+                value={this.state.begin}
                 onChange={this.handleInputChange}
-                name="author"
+                name="begin"
                 placeholder="Start Year"
               />
               <TextArea
-                value={this.state.synopsis}
+                value={this.state.end}
                 onChange={this.handleInputChange}
-                name="synopsis"
+                name="end"
                 placeholder="End Year"
               />
               <FormBtn
-                disabled={!(this.state.author && this.state.title)}
+                // disabled={!(this.state.author && this.state.title)}
                 onClick={this.handleFormSubmit}
               >
                 Submit Book
@@ -106,8 +136,8 @@ class Books extends Component {
                 ))}
               </List>
             ) : (
-              <h3>No Results to Display</h3>
-            )}
+                <h3>No Results to Display</h3>
+              )}
           </Col>
         </Row>
       </Container>
