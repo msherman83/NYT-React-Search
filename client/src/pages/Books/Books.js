@@ -57,11 +57,11 @@ class Books extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-    API.getArticles({
-      topic: this.state.topic,
-      begin: this.state.begin,
-      end: this.state.end
-    })
+    API.getArticles(
+      this.state.topic,
+      this.state.begin,
+      this.state.end
+    )
       .then(res => {
         if (res.data.status === "error") {
           throw new Error(res.data.message);
