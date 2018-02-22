@@ -41,12 +41,14 @@ class Books extends Component {
       .catch(err => console.log(err));
   };
 
+
   saveArticle = event => {
-    API.saveArticle({
-      title: this.state.title
-    })
-      .then(res => this.loadBooks())
-      .catch(err => console.log(err));
+      API.saveArticle({
+        title: "testing"
+      })
+        .then(res => this.loadBooks())
+        .catch(err => console.log(err));
+    
   };
 
 
@@ -135,7 +137,7 @@ class Books extends Component {
                   // disabled={!(this.state.author && this.state.title)}
                   onClick={this.handleFormSubmit}
                 >
-                  Submit Book
+                  Article Search
               </FormBtn>
               </form>
             </Col>
@@ -172,7 +174,7 @@ class Books extends Component {
                   {articles.map(article => (
                     <ListItem>
                       {article}
-                      <SaveBtn />
+                      <SaveBtn onClick={() => this.saveArticle()}/>
                     </ListItem>
                   ))}
                 </List>
