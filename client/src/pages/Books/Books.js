@@ -75,36 +75,20 @@ class Books extends Component {
         } else {
           console.log(res.data.response);
 
-          for (let i = 0; i < 5; i++) {
-            // console.log(res.data.response.docs[i].headline.main);
-
             this.setState({
-              articles: [this.state.articles, res.data.response.docs[i].headline.main]
+              articles: res.data.response.docs
             })
-
-            // this.state.articles += res.data.response.docs[i].headline.main;
           }
-
           console.log("Articles: " + this.state.articles)
         }
-        // this.setState({ results: res.data.message, error: "" });
-      })
+      )
       .catch(err => this.setState({ error: err.message }));
 
-    // if (this.state.title && this.state.author) {
-    //   API.saveBook({
-    //     title: this.state.title,
-    //     author: this.state.author,
-    //     synopsis: this.state.synopsis
-    //   })
-    //     .then(res => this.loadBooks())
-    //     .catch(err => console.log(err));
-    // }
   };
 
   render() {
-    
-    var articles = this.state.articles;
+
+    // var articles = this.state.articles;
 
     return (
       <div>
@@ -171,9 +155,10 @@ class Books extends Component {
                 <h1>Article Search Results</h1>
               </Jumbotron>
               <List>
-                  {articles.map(article => (
-                    <ListItem>
-                      {article}
+             
+                  {this.state.articles.map(article => (
+                    <ListItem key={Math.random()}>
+                      {article.headline.main}
                       <SaveBtn onClick={() => this.saveArticle()}/>
                     </ListItem>
                   ))}
