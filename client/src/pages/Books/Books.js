@@ -16,6 +16,7 @@ class Books extends Component {
     synopsis: "",
 
     articles: [],
+    savedArticles: [],
     topic: "",
     begin: "",
     end: ""
@@ -24,8 +25,16 @@ class Books extends Component {
 
 
   componentDidMount() {
-    this.loadBooks();
+    this.loadArticles();
   }
+
+  loadArticles = () => {
+    API.getSavedArticles()
+      .then(res =>
+        this.setState({ savedArticles: res.data, title: "", date: ""})
+      )
+      .catch(err => console.log(err));
+  };
 
   loadBooks = () => {
     API.getBooks()
@@ -35,18 +44,20 @@ class Books extends Component {
       .catch(err => console.log(err));
   };
 
-  deleteBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
+  deleteArticle = id => {
+    API.deleteArticle(id)
+      .then(res => this.loadArticles())
       .catch(err => console.log(err));
   };
 
 
   saveArticle = event => {
+    console.log("testing Article Save: " + this.state.data[event]);
+
       API.saveArticle({
         title: "testing"
       })
-        .then(res => this.loadBooks())
+        .then(res => this.loadArticles())
         .catch(err => console.log(err));
     
   };
@@ -59,7 +70,6 @@ class Books extends Component {
     });
   };
 
-  // Its grabbing the topic, begin and end and throwing them all into topic paramater of the API call as an object.  Leaving begin and end undefined.  
 
 
   handleFormSubmit = event => {
@@ -127,18 +137,18 @@ class Books extends Component {
             </Col>
             <Col size="md-6 sm-12">
               <Jumbotron>
-                <h1>Books On My List</h1>
+                <h1>Saved Articles</h1>
               </Jumbotron>
-              {this.state.books.length ? (
+              {this.state.savedArticles.length ? (
                 <List>
-                  {this.state.books.map(book => (
-                    <ListItem key={book._id}>
-                      <Link to={"/books/" + book._id}>
+                  {this.state.savedArticles.map(article => (
+                    <ListItem key={article._id}>
+                      {/* <Link to={"/books/" + book._id}> */}
                         <strong>
-                          {book.title} by {book.author}
+                          {article.title} by {article.date}
                         </strong>
-                      </Link>
-                      <DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                      {/* </Link> */}
+                      <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                     </ListItem>
                   ))}
                 </List>
@@ -155,9 +165,8 @@ class Books extends Component {
                 <h1>Article Search Results</h1>
               </Jumbotron>
               <List>
-             
                   {this.state.articles.map(article => (
-                    <ListItem key={Math.random()}>
+                    <ListItem key={article}>
                       {article.headline.main}
                       <SaveBtn onClick={() => this.saveArticle()}/>
                     </ListItem>
