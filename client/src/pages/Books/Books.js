@@ -23,7 +23,6 @@ class Books extends Component {
   };
 
 
-
   componentDidMount() {
     this.loadArticles();
   }
@@ -31,7 +30,7 @@ class Books extends Component {
   loadArticles = () => {
     API.getSavedArticles()
       .then(res =>
-        this.setState({ savedArticles: res.data, title: "", date: ""})
+        this.setState({ savedArticles: res.data, title: "", date: "" })
       )
       .catch(err => console.log(err));
   };
@@ -52,10 +51,9 @@ class Books extends Component {
 
 
   saveArticle = event => {
-    console.log("testing Article Save: " + this.state.data[event]);
-
+    console.log("save article: " + event)
       API.saveArticle({
-        title: "testing"
+        title: event
       })
         .then(res => this.loadArticles())
         .catch(err => console.log(err));
@@ -98,8 +96,6 @@ class Books extends Component {
 
   render() {
 
-    // var articles = this.state.articles;
-
     return (
       <div>
         <Container fluid>
@@ -128,7 +124,6 @@ class Books extends Component {
                   placeholder="End Year"
                 />
                 <FormBtn
-                  // disabled={!(this.state.author && this.state.title)}
                   onClick={this.handleFormSubmit}
                 >
                   Article Search
@@ -143,11 +138,9 @@ class Books extends Component {
                 <List>
                   {this.state.savedArticles.map(article => (
                     <ListItem key={article._id}>
-                      {/* <Link to={"/books/" + book._id}> */}
                         <strong>
-                          {article.title} by {article.date}
+                          {article.title}  - ({article.date})
                         </strong>
-                      {/* </Link> */}
                       <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                     </ListItem>
                   ))}
@@ -166,9 +159,9 @@ class Books extends Component {
               </Jumbotron>
               <List>
                   {this.state.articles.map(article => (
-                    <ListItem key={article}>
+                    <ListItem key={article.headline.main}>
                       {article.headline.main}
-                      <SaveBtn onClick={() => this.saveArticle()}/>
+                      <SaveBtn onClick={() => this.saveArticle(article.headline.main)}/>
                     </ListItem>
                   ))}
                 </List>
