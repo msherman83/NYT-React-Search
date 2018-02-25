@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import DeleteBtn from "../../components/DeleteBtn";
+import SaveBtn from "../../components/SaveBtn";
 import Jumbotron from "../../components/Jumbotron";
 import API from "../../utils/API";
 import { Link } from "react-router-dom";
@@ -12,12 +13,27 @@ class Books extends Component {
     books: [],
     title: "",
     author: "",
-    synopsis: ""
+    synopsis: "",
+
+    articles: [],
+    savedArticles: [],
+    topic: "",
+    begin: "",
+    end: ""
   };
 
+
   componentDidMount() {
-    this.loadBooks();
+    this.loadArticles();
   }
+
+  loadArticles = () => {
+    API.getSavedArticles()
+      .then(res =>
+        this.setState({ savedArticles: res.data, title: "", date: "" })
+      )
+      .catch(err => console.log(err));
+  };
 
   loadBooks = () => {
     API.getBooks()
@@ -27,11 +43,23 @@ class Books extends Component {
       .catch(err => console.log(err));
   };
 
-  deleteBook = id => {
-    API.deleteBook(id)
-      .then(res => this.loadBooks())
+  deleteArticle = id => {
+    API.deleteArticle(id)
+      .then(res => this.loadArticles())
       .catch(err => console.log(err));
   };
+
+
+  saveArticle = event => {
+    console.log("save article: " + event)
+      API.saveArticle({
+        title: event
+      })
+        .then(res => this.loadArticles())
+        .catch(err => console.log(err));
+    
+  };
+
 
   handleInputChange = event => {
     const { name, value } = event.target;
@@ -40,77 +68,107 @@ class Books extends Component {
     });
   };
 
+
+
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveBook({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
-      })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
-    }
+    API.getArticles(
+      this.state.topic,
+      this.state.begin,
+      this.state.end
+    )
+      .then(res => {
+        if (res.data.status === "error") {
+          throw new Error(res.data.message);
+        } else {
+          console.log(res.data.response);
+
+            this.setState({
+              articles: res.data.response.docs
+            })
+          }
+          console.log("Articles: " + this.state.articles)
+        }
+      )
+      .catch(err => this.setState({ error: err.message }));
+
   };
 
   render() {
+
     return (
-      <Container fluid>
-        <Row>
-          <Col size="md-6">
-            <Jumbotron>
-              <h1>Search for Articles</h1>
-            </Jumbotron>
-            <form>
-              <Input
-                value={this.state.title}
-                onChange={this.handleInputChange}
-                name="title"
-                placeholder="Topic (required)"
-              />
-              <Input
-                value={this.state.author}
-                onChange={this.handleInputChange}
-                name="author"
-                placeholder="Start Year"
-              />
-              <TextArea
-                value={this.state.synopsis}
-                onChange={this.handleInputChange}
-                name="synopsis"
-                placeholder="End Year"
-              />
-              <FormBtn
-                disabled={!(this.state.author && this.state.title)}
-                onClick={this.handleFormSubmit}
-              >
-                Submit Book
+      <div>
+        <Container fluid>
+          <Row>
+            <Col size="md-6">
+              <Jumbotron>
+                <h1>Search for Articles</h1>
+              </Jumbotron>
+              <form>
+                <Input
+                  value={this.state.topic}
+                  onChange={this.handleInputChange}
+                  name="topic"
+                  placeholder="Topic"
+                />
+                <Input
+                  value={this.state.begin}
+                  onChange={this.handleInputChange}
+                  name="begin"
+                  placeholder="Start Year"
+                />
+                <TextArea
+                  value={this.state.end}
+                  onChange={this.handleInputChange}
+                  name="end"
+                  placeholder="End Year"
+                />
+                <FormBtn
+                  onClick={this.handleFormSubmit}
+                >
+                  Article Search
               </FormBtn>
-            </form>
-          </Col>
-          <Col size="md-6 sm-12">
-            <Jumbotron>
-              <h1>Books On My List</h1>
-            </Jumbotron>
-            {this.state.books.length ? (
+              </form>
+            </Col>
+            <Col size="md-6 sm-12">
+              <Jumbotron>
+                <h1>Saved Articles</h1>
+              </Jumbotron>
+              {this.state.savedArticles.length ? (
+                <List>
+                  {this.state.savedArticles.map(article => (
+                    <ListItem key={article._id}>
+                        <strong>
+                          {article.title}  - ({article.date})
+                        </strong>
+                      <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                  <h3>No Results to Display</h3>
+                )}
+            </Col>
+          </Row>
+        </Container>
+        <Container fluid>
+          <Row>
+            <Col size="md-6">
+              <Jumbotron>
+                <h1>Article Search Results</h1>
+              </Jumbotron>
               <List>
-                {this.state.books.map(book => (
-                  <ListItem key={book._id}>
-                    <Link to={"/books/" + book._id}>
-                      <strong>
-                        {book.title} by {book.author}
-                      </strong>
-                    </Link>
-                    <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <h3>No Results to Display</h3>
-            )}
-          </Col>
-        </Row>
-      </Container>
+                  {this.state.articles.map(article => (
+                    <ListItem key={article.headline.main}>
+                      {article.headline.main}
+                      <SaveBtn onClick={() => this.saveArticle(article.headline.main)}/>
+                    </ListItem>
+                  ))}
+                </List>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     );
   }
 }
