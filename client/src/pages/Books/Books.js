@@ -10,11 +10,6 @@ import { Input, TextArea, FormBtn } from "../../components/Form";
 
 class Books extends Component {
   state = {
-    books: [],
-    title: "",
-    author: "",
-    synopsis: "",
-
     articles: [],
     savedArticles: [],
     topic: "",
@@ -35,13 +30,6 @@ class Books extends Component {
       .catch(err => console.log(err));
   };
 
-  loadBooks = () => {
-    API.getBooks()
-      .then(res =>
-        this.setState({ books: res.data, title: "", author: "", synopsis: "" })
-      )
-      .catch(err => console.log(err));
-  };
 
   deleteArticle = id => {
     API.deleteArticle(id)

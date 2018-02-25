@@ -30,9 +30,3 @@ app.listen(PORT, function() {
   console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
 });
 
-
-// TO DO
-// Componenent for searching NYT Database for articles that meet a certain start and end year.
-// Create API request to NYT database for what we need
-// Have it grab the contents of the form to search from
-// modify submit book to search the NYT database
