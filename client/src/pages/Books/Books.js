@@ -38,14 +38,14 @@ class Books extends Component {
   };
 
 
-  saveArticle = event => {
-    console.log("save article: " + event)
-      API.saveArticle({
-        title: event
-      })
-        .then(res => this.loadArticles())
-        .catch(err => console.log(err));
-    
+  saveArticle = (title, url) => {
+    API.saveArticle({
+      title: title,
+      url: url
+    })
+      .then(res => this.loadArticles())
+      .catch(err => console.log(err));
+
   };
 
 
@@ -71,12 +71,13 @@ class Books extends Component {
         } else {
           console.log(res.data.response);
 
-            this.setState({
-              articles: res.data.response.docs
-            })
-          }
-          console.log("Articles: " + this.state.articles)
+          this.setState({
+            articles: res.data.response.docs
+          })
         }
+        console.log("Articles: " + this.state.articles)
+
+      }
       )
       .catch(err => this.setState({ error: err.message }));
 
@@ -126,8 +127,8 @@ class Books extends Component {
                 <List>
                   {this.state.savedArticles.map(article => (
                     <ListItem key={article._id}>
-                        <strong>
-                          {article.title}  - ({article.date})
+                      <strong>
+                      <a target='_blank' href={article.url}>  {article.title} </a> - ({article.date})
                         </strong>
                       <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                     </ListItem>
@@ -146,13 +147,15 @@ class Books extends Component {
                 <h1>Article Search Results</h1>
               </Jumbotron>
               <List>
-                  {this.state.articles.map(article => (
-                    <ListItem key={article.headline.main}>
-                      {article.headline.main}
-                      <SaveBtn onClick={() => this.saveArticle(article.headline.main)}/>
-                    </ListItem>
-                  ))}
-                </List>
+                {this.state.articles.map(article => (
+                  <ListItem key={article.headline.main}>
+                    {/* <Link to={article.web_url}> */}
+                    <a target='_blank' href={article.web_url}>{article.headline.main}</a>
+                    {/* </Link> */}
+                    <SaveBtn onClick={() => this.saveArticle(article.headline.main, article.web_url)} />
+                  </ListItem>
+                ))}
+              </List>
             </Col>
           </Row>
         </Container>
