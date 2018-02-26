@@ -1,10 +1,23 @@
-# Create React Express App
+# NY Times Article Search and Save
 
-## About This Boilerplate
+* Choose a topic to search for
+* Choose a start date/time - YYYYMMDD
+* Choose an end date/time - YYYYMMDD
+* Search!
 
-This setup allows for a Node/Express/React app which can be easily deployed to Heroku.
+* Save the article to read later using the save button next to the search output.
+* Delete the article when you are finished by clicking the X next to the saved article.
 
-The front-end React app will auto-reload as it's updated via webpack dev server, and the backend Express app will auto-reload independently with nodemon.
+
+## Technologies Used
+* Javascript
+* Node
+* Express
+* React
+* MongoDB
+
+
+# How to install and run
 
 ## Starting the app locally
 
@@ -25,18 +38,4 @@ yarn start
 
 That's it, your app should be running on <http://localhost:3000>. The Express server should intercept any AJAX requests from the client.
 
-## Deployment (Heroku)
 
-After confirming that you have an up to date git repository and a Heroku app created, complete the following:
-
-1. Build the React app for production by running the following command:
-
-```
-yarn build
-```
-
-2. Add and commit all changes to git
-
-3. Push to Heroku
-
-If all previous steps were followed correctly, your application should be deployed to Heroku!

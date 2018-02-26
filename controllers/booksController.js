@@ -2,6 +2,8 @@ const db = require("../models");
 
 // Defining methods for the booksController
 module.exports = {
+
+  // Not letting me remove these 2 entries so i added db.Article to them instead of db.Book
   findAll: function(req, res) {
     db.Article
       .find(req.query)
