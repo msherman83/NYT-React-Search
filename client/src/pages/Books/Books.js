@@ -104,13 +104,13 @@ class Books extends Component {
                   value={this.state.begin}
                   onChange={this.handleInputChange}
                   name="begin"
-                  placeholder="Start Year"
+                  placeholder="Start Year (Format: YYYYMMDD)"
                 />
                 <TextArea
                   value={this.state.end}
                   onChange={this.handleInputChange}
                   name="end"
-                  placeholder="End Year"
+                  placeholder="End Year (Format: YYYYMMDD)"
                 />
                 <FormBtn
                   onClick={this.handleFormSubmit}
